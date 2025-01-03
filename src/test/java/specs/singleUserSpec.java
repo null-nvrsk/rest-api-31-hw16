@@ -26,10 +26,35 @@ public class singleUserSpec {
             .expectBody("data.id", notNullValue())
             .build();
 
-    public static ResponseSpecification missingPasswordResponseSpec = new ResponseSpecBuilder()
+    public static ResponseSpecification invalidUserResponseSpec = new ResponseSpecBuilder()
             .log(STATUS)
             .log(BODY)
-            .expectStatusCode(400)
+            .expectStatusCode(404)
+            .build();
+
+    public static ResponseSpecification createUserResponseSpec = new ResponseSpecBuilder()
+            .log(STATUS)
+            .log(BODY)
+            .expectStatusCode(201)
+            .expectBody("name", notNullValue())
+            .expectBody("job", notNullValue())
+            .expectBody("id", notNullValue())
+            .expectBody("createdAt", notNullValue())
+            .build();
+
+    public static ResponseSpecification updateUserResponseSpec = new ResponseSpecBuilder()
+            .log(STATUS)
+            .log(BODY)
+            .expectStatusCode(200)
+            .expectBody("name", notNullValue())
+            .expectBody("job", notNullValue())
+            .expectBody("updatedAt", notNullValue())
+            .build();
+
+    public static ResponseSpecification deleteUserResponseSpec = new ResponseSpecBuilder()
+            .log(STATUS)
+            .log(BODY)
+            .expectStatusCode(204)
             .build();
 }
 

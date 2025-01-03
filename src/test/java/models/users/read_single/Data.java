@@ -1,4 +1,4 @@
-package models.users.single_user;
+package models.users.read_single;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

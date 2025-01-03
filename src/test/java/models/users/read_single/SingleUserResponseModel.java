@@ -1,9 +1,9 @@
-package models.users.single_user;
+package models.users.read_single;
 
 import lombok.Data;
 
 @Data
 public class SingleUserResponseModel {
-    public models.users.single_user.Data data;
+    public models.users.read_single.Data data;
     public Support support;
 }

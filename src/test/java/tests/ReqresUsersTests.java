@@ -1,8 +1,11 @@
 package tests;
 
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import models.users.single_user.SingleUserResponseModel;
+import models.users.create.CreateUserRequestModel;
+import models.users.create.CreateUserResponseModel;
+import models.users.read_single.SingleUserResponseModel;
+import models.users.update.UpdateUserRequestModel;
+import models.users.update.UpdateUserResponseModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,9 +13,7 @@ import org.junit.jupiter.api.Test;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.hamcrest.Matchers.is;
-import static specs.singleUserSpec.singleUserRequestSpec;
-import static specs.singleUserSpec.singleUserResponseSpec;
+import static specs.singleUserSpec.*;
 
 @DisplayName("Проверка ручек из категории Users")
 public class ReqresUsersTests {
@@ -27,13 +28,13 @@ public class ReqresUsersTests {
     @DisplayName("Проверка одного пользователя (#2)")
     public void singleUserTest() {
         SingleUserResponseModel singleUserResponse =
-                step("Получить данные по пользователю #2", () ->
-                    given(singleUserRequestSpec)
-                    .when()
-                        .get("/users/2")
-                    .then()
-                        .spec(singleUserResponseSpec)
-                        .extract().as(SingleUserResponseModel.class));
+            step("Получить данные по пользователю #2", () ->
+                given(singleUserRequestSpec)
+                .when()
+                    .get("/users/2")
+                .then()
+                    .spec(singleUserResponseSpec)
+                    .extract().as(SingleUserResponseModel.class));
 
         step("Проверка данных пользователя", () -> {
             assertThat(singleUserResponse.getData().getId()).isEqualTo(2);
@@ -47,107 +48,98 @@ public class ReqresUsersTests {
     @Test
     @DisplayName("Проверка несуществующего пользователя")
     public void invalidSingleUserTest() {
-        given()
-                .log().uri()
-                .contentType(ContentType.JSON)
+        SingleUserResponseModel singleUserResponse =
+            step("Получить данные по несуществующему пользователю #23", () ->
+                given(singleUserRequestSpec)
                 .when()
-                .get("/users/23")
+                    .get("/users/23")
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(404);
+                    .spec(invalidUserResponseSpec)
+                    .extract().as(SingleUserResponseModel.class));
+
+        step("Проверка, что нет данных пользователя", () -> {
+            assertThat(singleUserResponse.getData()).isNull();
+            assertThat(singleUserResponse.getSupport()).isNull();
+        });
     }
 
     @Test
     @DisplayName("Создание нового пользователя")
     public void createUserTest() {
-        String data = "{ \"name\": \"morpheus\", \"job\": \"leader\" }";
+        CreateUserRequestModel createUserBody = new CreateUserRequestModel();
+        createUserBody.setName("morpheus");
+        createUserBody.setJob("leader");
 
-        given()
-                .log().uri()
-                .contentType(ContentType.JSON)
-                .body(data)
+        CreateUserResponseModel сreateUserResponse =
+            step("Получить данные по несуществующему пользователю #23", () ->
+                given(singleUserRequestSpec)
+                    .body(createUserBody)
                 .when()
-                .post("/users")
+                    .post("/users")
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(201)
-                .body("name", is("morpheus"))
-                .body("job", is("leader"));
+                    .spec(createUserResponseSpec)
+                    .extract().as(CreateUserResponseModel.class));
+
+        step("Проверка данных нового пользователя", () -> {
+            assertThat(сreateUserResponse.getName()).isEqualTo("morpheus");
+            assertThat(сreateUserResponse.getJob()).isEqualTo("leader");
+            assertThat(сreateUserResponse.getId()).asInt().isPositive();
+        });
     }
 
     @Test
     @DisplayName("Обновление параметров пользователя (метод PUT)")
     public void updateSingleUserTest() {
-        String data = "{ \"name\": \"morpheus\", \"job\": \"zion resident\" }";
+        UpdateUserRequestModel updateUserBody = new UpdateUserRequestModel();
+        updateUserBody.setName("morpheus");
+        updateUserBody.setJob("zion resident");
 
-        given()
-                .log().uri()
-                .contentType(ContentType.JSON)
-                .body(data)
+        UpdateUserResponseModel updateUserResponse =
+            step("Обновляем параметров пользователя (метод PUT)", () ->
+                given(singleUserRequestSpec)
+                    .body(updateUserBody)
                 .when()
-                .put("/users/2")
+                    .put("/users/2")
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("name", is("morpheus"))
-                .body("job", is("zion resident"));
+                    .spec(updateUserResponseSpec)
+                    .extract().as(UpdateUserResponseModel.class));
+
+        step("Проверка новых данных пользователя", () -> {
+            assertThat(updateUserResponse.getName()).isEqualTo("morpheus");
+            assertThat(updateUserResponse.getJob()).isEqualTo("zion resident");
+        });
     }
 
     @Test
     @DisplayName("Обновление всех параметров пользователя (метод PATCH)")
     public void updateFieldsSingleUserTest() {
-        String data = "{ \"name\": \"morpheus\", \"job\": \"zion resident\" }";
+        UpdateUserRequestModel updateUserBody = new UpdateUserRequestModel();
+        updateUserBody.setName("morpheus");
+        updateUserBody.setJob("zion resident");
 
-        given()
-                .log().uri()
-                .contentType(ContentType.JSON)
-                .body(data)
+        UpdateUserResponseModel updateUserResponse =
+            step("Обновляем параметров пользователя (метод PUT)", () ->
+                given(singleUserRequestSpec)
+                    .body(updateUserBody)
                 .when()
-                .patch("/users/2")
+                    .put("/users/2")
                 .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("name", is("morpheus"))
-                .body("job", is("zion resident"));
+                    .spec(updateUserResponseSpec)
+                    .extract().as(UpdateUserResponseModel.class));
+
+        step("Проверка новых данных пользователя", () -> {
+            assertThat(updateUserResponse.getName()).isEqualTo("morpheus");
+            assertThat(updateUserResponse.getJob()).isEqualTo("zion resident");
+        });
     }
 
     @Test
-    @DisplayName("Обновление параметра имени пользователя")
-    public void updateFieldNameSingleUserTest() {
-        String data = "{ \"name\": \"neo\" }";
-
-        given()
-                .log().uri()
-                .contentType(ContentType.JSON)
-                .body(data)
-                .when()
-                .patch("/users/2")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("name", is("neo"));
-    }
-
-    @Test
-    @DisplayName("Обновление параметра занятия пользователя")
-    public void updateFieldJobSingleUserTest() {
-        String data = "{ \"job\": \"plumber\" }";
-
-        given()
-                .log().uri()
-                .contentType(ContentType.JSON)
-                .body(data)
-                .when()
-                .patch("/users/2")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("job", is("plumber"));
+    @DisplayName("Удаление пользователя (#2)")
+    public void deleteUserTest() {
+        given(singleUserRequestSpec)
+        .when()
+            .delete("/users/2")
+        .then()
+            .spec(deleteUserResponseSpec);
     }
 }
