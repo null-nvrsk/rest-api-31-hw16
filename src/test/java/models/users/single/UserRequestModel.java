@@ -1,9 +1,9 @@
-package models.users.update;
+package models.users.single;
 
 import lombok.Data;
 
 @Data
-public class UpdateUserRequestModel {
+public class UserRequestModel {
     public String name;
     public String job;
 }

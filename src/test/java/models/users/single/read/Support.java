@@ -1,4 +1,4 @@
-package models.users.read_single;
+package models.users.single.read;
 
 import lombok.Data;
 
