@@ -64,12 +64,12 @@ public class ReqresUsersTests extends TestBase {
         CreateUserResponseModel createUserResponse =
                 step("Получить данные по несуществующему пользователю #23", () ->
                         given(userRequestSpec)
-                            .body(createUserBody)
-                        .when()
-                            .post("/users")
-                        .then()
-                            .spec(userResponse201Spec)
-                            .extract().as(CreateUserResponseModel.class));
+                                .body(createUserBody)
+                                .when()
+                                .post("/users")
+                                .then()
+                                .spec(userResponse201Spec)
+                                .extract().as(CreateUserResponseModel.class));
 
         step("Проверка данных нового пользователя", () -> {
             assertThat(createUserResponse.getName()).isEqualTo("morpheus");
@@ -88,12 +88,12 @@ public class ReqresUsersTests extends TestBase {
         UpdateUserResponseModel updateUserResponse =
                 step("Обновляем параметров пользователя (метод PUT)", () ->
                         given(userRequestSpec)
-                            .body(updateUserBody)
-                        .when()
-                            .put("/users/2")
-                        .then()
-                            .spec(userResponse200Spec)
-                            .extract().as(UpdateUserResponseModel.class));
+                                .body(updateUserBody)
+                                .when()
+                                .put("/users/2")
+                                .then()
+                                .spec(userResponse200Spec)
+                                .extract().as(UpdateUserResponseModel.class));
 
         step("Проверка новых данных пользователя", () -> {
             assertThat(updateUserResponse.getName()).isEqualTo("morpheus");
@@ -110,15 +110,13 @@ public class ReqresUsersTests extends TestBase {
 
         UpdateUserResponseModel updateUserResponse =
                 step("Обновляем параметров пользователя (метод PUT)", () ->
-                        // @formatter:off
                         given(userRequestSpec)
-                            .body(updateUserBody)
-                        .when()
-                            .put("/users/2")
-                        .then()
-                            .spec(userResponse200Spec)
-                            .extract().as(UpdateUserResponseModel.class));
-                        // @formatter:on
+                                .body(updateUserBody)
+                                .when()
+                                .put("/users/2")
+                                .then()
+                                .spec(userResponse200Spec)
+                                .extract().as(UpdateUserResponseModel.class));
 
         step("Проверка новых данных пользователя", () -> {
             assertThat(updateUserResponse.getName()).isEqualTo("morpheus");
@@ -129,12 +127,10 @@ public class ReqresUsersTests extends TestBase {
     @Test
     @DisplayName("Удаление пользователя (#2)")
     public void deleteUserTest() {
-        // @formatter:off
         given(userRequestSpec)
-        .when()
-            .delete("/users/2")
-        .then()
-            .spec(userResponse204Spec);
-        // @formatter:on
+                .when()
+                .delete("/users/2")
+                .then()
+                .spec(userResponse204Spec);
     }
 }
